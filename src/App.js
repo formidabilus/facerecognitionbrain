@@ -41,8 +41,8 @@ function App() {
   };
 
   const displayFaceBox = (box) => {
+    setBox(box);
     console.log(box);
-    setBox({ box: box });
   };
 
   const onInputChange = (e) => {
