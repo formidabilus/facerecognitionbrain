@@ -46,7 +46,7 @@ function App() {
 
   const displayFacebox = (boxes) => {
     setboxes(boxes);
-    console.log(boxes);
+    console.log(...boxes);
   };
 
   const onInputChange = (e) => {
