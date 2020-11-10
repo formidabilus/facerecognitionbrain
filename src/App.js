@@ -45,7 +45,9 @@ function App() {
   };
 
   const displayFacebox = (boxes) => {
-    setboxes(boxes);
+    setboxes((prevState) => ({
+      box: [...prevState.box, ...boxes],
+    }));
     console.log(...boxes);
   };
 
