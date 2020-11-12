@@ -1,6 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Signin = ({ onRouteChange }) => {
+function Signin(props) {
+  const [signInEmail, setSignInEmail] = useState("");
+  const [signInPassword, setSignInPassword] = useState("");
+
+  const { onRouteChange, loadUser } = props;
+
+  const onEmailChange = (e) => {
+    setSignInEmail(e.target.value);
+  };
+
+  const onPasswordChange = (e) => {
+    setSignInPassword(e.target.value);
+  };
+
+  const onSubmitSignIn = () => {
+    fetch("http://localhost:3000/signin", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: signInEmail,
+        password: signInPassword,
+      }),
+    })
+      .then((response) => response.json())
+      .then((user) => {
+        if (user.id) {
+          loadUser(user);
+          onRouteChange("home");
+        }
+      });
+  };
+
   return (
     <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
       <main className="pa4 black-80">
@@ -12,6 +43,7 @@ const Signin = ({ onRouteChange }) => {
                 Email
               </label>
               <input
+                onChange={onEmailChange}
                 className="pa2 input-reset ba b--black bg-transparent hover-bg-black hover-white w-100"
                 type="email"
                 name="email-address"
@@ -23,6 +55,7 @@ const Signin = ({ onRouteChange }) => {
                 Password
               </label>
               <input
+                onChange={onPasswordChange}
                 className="b pa2 input-reset ba b--black bg-transparent hover-bg-black hover-white w-100"
                 type="password"
                 name="password"
@@ -32,7 +65,7 @@ const Signin = ({ onRouteChange }) => {
           </fieldset>
           <div className="">
             <input
-              onClick={() => onRouteChange("home")}
+              onSubmit={onSubmitSignIn}
               className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
               type="submit"
               value="Sign in"
@@ -50,6 +83,6 @@ const Signin = ({ onRouteChange }) => {
       </main>
     </article>
   );
-};
+}
 
 export default Signin;
