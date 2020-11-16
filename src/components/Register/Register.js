@@ -20,7 +20,7 @@ function Register(props) {
   };
 
   const onSubmitSignIn = () => {
-    fetch("http://localhost:3000/register", {
+    fetch("https://thawing-wave-54216.herokuapp.com/register", {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
