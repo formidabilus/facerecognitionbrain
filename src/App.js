@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Clarifai from "clarifai";
 import Particles from "react-particles-js";
 import Navigation from "./components/Navigation/Navigation";
 import Signin from "./components/Signin/Signin";
@@ -9,8 +8,6 @@ import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import "./App.css";
-
-const app = new Clarifai.App({ apiKey: "1b51ef476e3d4e5fa790a5e6be410ba8" });
 
 const particlesOptions = {
   particles: {
@@ -36,6 +33,21 @@ function App() {
     entries: 0,
     joined: "",
   });
+
+  function clearState() {
+    setInput("");
+    setImageUrl("");
+    setBox({});
+    setRoute("signin");
+    setIsSignedIn(false);
+    setUser({
+      id: "",
+      name: "",
+      email: "",
+      entries: 0,
+      joined: "",
+    });
+  }
 
   const loadUser = (data) => {
     setUser({
@@ -71,13 +83,14 @@ function App() {
 
   const onPictureSubmit = () => {
     setImageUrl(input);
-    app.models
-      .initModel({
-        id: Clarifai.FACE_DETECT_MODEL,
-      })
-      .then((faceDetectModel) => {
-        return faceDetectModel.predict(input);
-      })
+    fetch("http://localhost:3000/imageurl", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        input: input,
+      }),
+    })
+      .then((response) => response.json())
       .then((response) => {
         if (response) {
           fetch("http://localhost:3000/image", {
@@ -90,7 +103,8 @@ function App() {
             .then((response) => response.json())
             .then((count) => {
               setUser({ ...user, entries: count });
-            });
+            })
+            .catch(console.log);
         }
         displayFaceBox(calculateFaceLocation(response));
       })
@@ -99,7 +113,7 @@ function App() {
 
   const onRouteChange = (route) => {
     if (route === "signout") {
-      setIsSignedIn(false);
+      clearState();
     } else if (route === "home") {
       setIsSignedIn(true);
     }
